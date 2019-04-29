@@ -1,0 +1,12 @@
+package livrable1;
+
+public class App {
+
+	public static void main(String[] args){
+		//FenetreChoix fen = new FenetreChoix();
+		FrmIdentification fen = new FrmIdentification();
+		//FrmGestionArtiste fen = new FrmGestionArtiste();
+		fen.setVisible(true);
+	}
+
+}

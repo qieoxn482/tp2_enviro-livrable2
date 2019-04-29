@@ -1,0 +1,56 @@
+package livrable2;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class SqliteConnection {
+	
+	public static Connection dbConnector() {
+		Connection conn = null;
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			conn = DriverManager.getConnection("jdbc:sqlite:src/livrable2/Idehen_AbouAntoun_Albums.db");
+			
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("ERREUR : Driver manquant.");
+		} catch (SQLException se) {
+			System.out.println("ERREUR SQL :" + se);
+		}
+		
+		return conn;
+	}
+	
+	public void insertNouveau(int id) {
+        String sql = "INSERT INTO artistes(id) VALUES(?)";
+ 
+        try (Connection conn = this.dbConnector();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+	
+	public void updateArtiste(int id, String nom, boolean membre, String imageIcon) {
+        String sql = "UPDATE artistes SET nom = ?, membre = ?, image = ? WHERE id = ?";
+ 
+        try (Connection conn = this.dbConnector();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nom);
+            pstmt.setBoolean(2, membre);
+            pstmt.setString(3, imageIcon);
+            pstmt.setInt(4, id);
+            
+            pstmt.executeUpdate();
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+}

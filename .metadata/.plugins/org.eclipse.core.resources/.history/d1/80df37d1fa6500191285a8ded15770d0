@@ -1,0 +1,43 @@
+package vue;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class SqliteConnection {
+	
+	public static Connection dbConnector() {
+		Connection conn = null;
+		Statement statement = null;
+		ResultSet jeuResultat;
+		String requete= "Select * from artistes";
+		
+		try {
+			Class.forName("org.sqlite.JDBC");
+			conn = DriverManager.getConnection("jdbc:sqlite:Idehen_AbouAntoun_Albums.db");
+			statement = conn.createStatement();
+			jeuResultat = statement.executeQuery(requete);
+			
+			ResultSetMetaData structure = jeuResultat.getMetaData();
+			
+			int nbColonnes = structure.getColumnCount();
+			
+			//for ()
+			/*conn.setAutoCommit(false);
+			Statement jeuInstruction = conn.createStatement();
+			jeuInstruction.addBatch(requete);
+			jeuInstruction.executeBatch();*/
+			
+			
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("ERREUR : Driver manquant.");
+		} catch (SQLException se) {
+			System.out.println("ERREUR SQL :" + se);
+		}
+		return null;
+	}
+
+}

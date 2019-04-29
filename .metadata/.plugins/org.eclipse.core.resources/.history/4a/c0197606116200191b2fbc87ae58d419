@@ -1,0 +1,177 @@
+package vue;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+
+public class FenetreArtiste extends JFrame{
+
+	private static final long serialVersionUID = 1L;
+	
+	/*JLabel labRecherche, labArtiste, labInfo, labNum, labNom, labMembre;
+	JTextField recherche, numero, nom;
+	JButton btnRecherche, btnQuitter, btnNouv, btnAjout, btnModif, btnSup, btnRemp;
+	JTable artiste;
+	JList<Object> album;
+	JCheckBox membre;
+	JPanel p1, p2;
+	Container pane;
+	GridBagConstraints gbc;*/
+	private static final int BORDER = 12;  // Window border in pixels.
+    private static final int GAP    = 5;   // Default gap btwn components.
+
+	JLabel    findLbl     = new JLabel("Find What:"   , JLabel.LEFT);
+    JLabel    replaceLbl  = new JLabel("Replace With:", JLabel.LEFT);
+    JTextField findTF     = new JTextField(20);
+    JTextField replaceTF  = new JTextField(20);
+    JButton   findBtn     = new JButton("Find");
+    JButton   replaceBtn  = new JButton("Replace");
+    JButton   replAllBtn  = new JButton("Replace All");
+    JButton   closeBtn    = new JButton("Close");
+    JButton   helpBtn     = new JButton("Help");
+    JCheckBox matchCaseCB = new JCheckBox("Match Case");
+    JCheckBox wholeWrdsCB = new JCheckBox("Whole Words");
+    JCheckBox regexCB     = new JCheckBox("Regular Expressions");
+    JCheckBox highlightCB = new JCheckBox("Highlight Results", true);
+    JCheckBox wrapCB      = new JCheckBox("Wrap Around", true);
+    JCheckBox selectionCB = new JCheckBox("Search Selection");
+    JCheckBox backwardsCB = new JCheckBox("Search Backwards");
+    JCheckBox incrementCB = new JCheckBox("Incremental Search", true);
+    
+    JDialog   replaceDialog = new JDialog();
+
+	
+	
+	public FenetreArtiste() {
+		
+		selectionCB.setEnabled(false);
+        
+        //... Create an independent GridLayout panel of buttons. 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(5, 1, GAP, GAP));
+        buttonPanel.add(findBtn);
+        buttonPanel.add(replaceBtn);
+        buttonPanel.add(replAllBtn);
+        buttonPanel.add(closeBtn);
+        buttonPanel.add(helpBtn);
+        
+        //... Create an independent GridLayout panel of check boxes.
+        JPanel checkBoxPanel = new JPanel();
+        checkBoxPanel.setLayout(new GridLayout(4, 2));
+        checkBoxPanel.add(matchCaseCB);
+        checkBoxPanel.add(wrapCB);
+        checkBoxPanel.add(wholeWrdsCB);
+        checkBoxPanel.add(selectionCB);
+        checkBoxPanel.add(regexCB);
+        checkBoxPanel.add(backwardsCB);
+        checkBoxPanel.add(highlightCB);
+        checkBoxPanel.add(incrementCB);
+        
+        //... Create GridBagLayout content pane; set border.
+        JPanel content = new JPanel(new GridBagLayout());
+        content.setBorder(BorderFactory.createEmptyBorder(BORDER, BORDER, 
+                BORDER, BORDER));
+
+//\\//\\//\\//\\//\\ GridBagLayout code begins here
+        GBHelper pos = new GBHelper();  // Create GridBag helper object.
+        
+        //... First row
+        content.add(findLbl, pos);
+        content.add(new Gap(GAP), pos.nextCol());
+        content.add(findTF      , pos.nextCol().expandW());
+        content.add(new Gap(GAP), pos.nextCol());
+        content.add(buttonPanel , pos.nextCol().height(5)
+                                             .align(GridBagConstraints.NORTH));
+        
+        content.add(new Gap(GAP) , pos.nextRow());  // Add a gap below
+        
+        //... Next row.
+        content.add(replaceLbl  , pos.nextRow());
+        content.add(new Gap(GAP), pos.nextCol());
+        content.add(replaceTF   , pos.nextCol().expandW());
+        
+        content.add(new Gap(2*GAP), pos.nextRow());  // Add a big gap below
+        
+        //... Last content row.
+        content.add(checkBoxPanel, pos.nextRow().nextCol().nextCol());
+        
+        //... Add an area that can expand at the bottom.
+        content.add(new Gap()  , pos.nextRow().width().expandH());
+ //\\//\\//\\//\\//\\ GridBagLayout code ends here
+        return content;
+
+		/*super("Gestion d'artistes");
+		setSize(800,800);
+		pane = new Container();
+		pane.setLayout(new BorderLayout());
+		p1 = new JPanel(new GridBagLayout());
+		gbc = new GridBagConstraints();*/
+	
+		/*gbc.insets = new Insets(4,2,2,2);
+		//gbc.fill=GridBagConstraints.BOTH;
+		
+		labRecherche = new JLabel("Rechercher un artiste");
+		labArtiste = new JLabel("Artistes");
+		labInfo = new JLabel("Informations");
+		labNum = new JLabel("Numéro");
+		labNom = new JLabel("Nom");
+		labMembre = new JLabel("Membre");
+		
+		recherche = new JTextField();
+		recherche.setPreferredSize(new Dimension(350,20));
+		numero = new JTextField();
+		numero.setPreferredSize(new Dimension(200,20));
+		nom = new JTextField();
+		nom.setPreferredSize(new Dimension(200,20));
+		
+		btnRecherche = new JButton("Recherche");
+		btnQuitter = new JButton("Quitter");
+		btnNouv = new JButton("Nouveau");
+		btnAjout = new JButton("Ajouter");
+		btnModif = new JButton("Modifier");
+		btnSup = new JButton("Supprimer");
+		btnRemp = new JButton("Remplacer");
+		
+		String[] columnNames = {"No", "Nom", "Membres"};
+		String[][] data = {};
+		
+		artiste = new JTable(data, columnNames);
+		album = new JList<Object>();
+		
+		membre = new JCheckBox();
+		
+		
+		gbc.weightx=0;
+		gbc.weighty=0;
+		
+		p1.add(labRecherche, gbc);
+		
+		gbc.weighty=1;
+		p1.add(recherche, gbc);
+		
+		
+		gbc.weightx=3;
+		p1.add(btnRecherche, gbc);
+		
+		pane.add(p1, BorderLayout.NORTH);
+		
+		add(pane);
+		setResizable(true);*/
+	}
+
+}

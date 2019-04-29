@@ -1,0 +1,16 @@
+1555857354618	Rename field 'artiste'
+1555857415170	Rename field 'album'
+1555944788515	Rename field 'recherche'
+1555944800583	Rename field 'numero'
+1555944814595	Rename field 'nom'
+1555944842920	Rename field 'membre'
+1555946926020	Rename field 'labPhoto'
+1555979527872	Rename type 'FenetreIdentification'
+1555979563736	Rename type 'FenetreChoix'
+1555979577692	Rename type 'FenetreArtiste'
+1555979591858	Rename type 'FenetreAide'
+1555979607955	Rename type 'FenetreAlbum'
+1555990174273	Rename field 'labAjouter'
+1556068915164	Delete element
+1556068920588	Delete element
+1556069797564	Delete element

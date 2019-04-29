@@ -1,0 +1,43 @@
+package vue;
+
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
+
+public class FrmAjoutArtiste extends JDialog implements ActionListener{
+
+	private static final long serialVersionUID = 1L;
+	private JLabel labAjouter, labNum, labNom, labMembre;
+	private JTextField textNom, textNumero;
+	private JCheckBox checkBoxMembre;
+	
+	public FrmAjoutArtiste() {
+		setTitle("Ajouter un Artiste");
+		setSize(300, 500);
+		setLayout(new FlowLayout());
+		labAjouter = new JLabel("Ajouter un Artiste!");
+		labNum = new JLabel("Numero :");
+		labNom = new JLabel("Nom :");
+		labMembre = new JLabel("Membre :")
+	}
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+}

@@ -1,0 +1,31 @@
+package vue;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JOptionPane;
+
+public class SqliteConnection {
+	
+	public static Connection dbConnector() {
+		Connection conn = null;
+		
+		try {
+			
+			Class.forName("org.sqlite.JDBC");
+			conn = DriverManager.getConnection("jdbc:sqlite:Idehen_AbouAntoun_Albums.db");
+			
+		
+		} catch (ClassNotFoundException cnfe) {
+			System.out.println("ERREUR : Driver manquant.");
+		} catch (SQLException se) {
+			System.out.println("ERREUR SQL :" + se);
+		}
+		return conn;
+	}
+
+}
