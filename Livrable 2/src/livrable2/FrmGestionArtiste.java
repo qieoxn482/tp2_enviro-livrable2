@@ -222,7 +222,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			PreparedStatement pst = connection.prepareStatement(query);
 			ResultSet rs = pst.executeQuery();
 			while (rs.next()) {
-				donnees.add(new Artiste(rs.getInt("id"), rs.getString("nom"), rs.getBoolean("membre"), "default.png"));
+				donnees.add(new Artiste(rs.getInt("id"), rs.getString("nom"), rs.getBoolean("membre"), rs.getString("photo")));
 			}
 
 		} catch (SQLException se) {
@@ -292,6 +292,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
 		String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
 		boolean estMembre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
+		String photo = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 3).toString();
 		
 		textNom.setText(nom);
 		textNumero.setText(Integer.toString(id));
@@ -301,6 +302,10 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		}else {
 			checkMembre.setSelected(false);
 		}
+		
+		icone = new ImageIcon(App.class.getResource(photo));
+		labPhotoArt.setIcon(icone);
+		
 	}
 
 }

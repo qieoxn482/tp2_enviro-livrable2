@@ -35,6 +35,8 @@ public class ModeleArtiste extends AbstractTableModel {
 			return donnees.get(rowIndex).getNom();
 		case 2:
 			return donnees.get(rowIndex).getMembre();
+		case 3:
+			return donnees.get(rowIndex).getPhoto();
 		default:
 			return null;
 		}
