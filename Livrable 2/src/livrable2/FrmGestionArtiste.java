@@ -93,20 +93,18 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		tableArtiste.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		tableArtiste.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			
 			public void valueChanged(ListSelectionEvent event) {
 				printInfo();
+				//printAlbum();
 			}
-			
 		});
 		
 		ascensseur = new JScrollPane(tableArtiste);
 
-		Album a = new Album(1, 1, "Flying Stars", "Pop", 2016, icone);
 		model = new DefaultListModel<Album>();
 		listAlbum = new JList<Album>(model);
-		model.addElement(a);
-
+		//donneesAlbum();
+		
 		checkMembre = new JCheckBox();
 		checkMembre.setEnabled(false);
 
@@ -231,12 +229,61 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		return donnees;
 
 	}
+	
+//	private void donneesAlbum() {
+//		try {
+//			String query = "select * from albums";
+//			PreparedStatement pst = connection.prepareStatement(query);
+//			ResultSet rs = pst.executeQuery();
+//			while (rs.next()) {
+//				model.addElement(new Album(rs.getInt("id_album"), rs.getInt("id_artiste"), rs.getString("titre"),
+//						rs.getString("genre"), rs.getInt("annee"), rs.getString("image")));
+//			}
+//
+//		} catch (SQLException se) {
+//			System.out.println("ERREUR SQL :" + se);
+//		}
+//	}
+	
+	private void printAlbum() {
+		try {
+			model.removeAllElements();
+			
+			String query1 = "select * from artistes";
+			PreparedStatement pst1 = connection.prepareStatement(query1);
+			ResultSet rs1 = pst1.executeQuery();
+			while (rs1.next()) {
+				String query = "select * from albums WHERE id = ?";
+				PreparedStatement pst = connection.prepareStatement(query);
+				pst.setInt(1, rs1.getInt("id"));
+				ResultSet rs = pst.executeQuery();
+				
+				if (rs.getInt("id_artiste") == rs1.getInt("id")) {
+					model.addElement(new Album(rs.getInt("id_album"), rs.getInt("id_artiste"), rs.getString("titre"),
+							rs.getString("genre"), rs.getInt("annee"), rs.getString("image")));
+				}
+				
+				while(rs1.next()) {
+					
+				}
+			}
+			
+			
+			
+			
+
+		} catch (SQLException se) {
+			System.out.println("ERREUR SQL :" + se);
+		}
+	}
+	
+	
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String fonction;
 		
-		if (e.getSource() == btnRecherche || e.getSource() == btnRemp) {
+		if (e.getSource() == btnRecherche) {
 			JOptionPane.showMessageDialog(null, "Cette fonctionnalité sera disponible lors du livrable 2!");
 
 		} else if (e.getSource() == btnQuitter) {
@@ -259,13 +306,20 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		} else if (e.getSource() == btnSup) {
 			//supprimerArtiste();
 			
-		}
+		}  else if (e.getSource() == btnRemp) {
+			remplacerPhoto();
+			
+		} 
+		
+		
 	}
 
 	private void updateTable() {
+		
 		FrmGestionArtiste frm = new FrmGestionArtiste();
 		this.setVisible(false);
 		frm.setVisible(true);
+		
 	}
 	
 	private void modifierArtiste(String fonction) {
@@ -278,17 +332,20 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			boolean membre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
 			sqliteConn.updateArtiste(id, nom, membre, "default.png");
 			JOptionPane.showMessageDialog(null, "L'artiste selectionné à été "+fonction +"!");
+			printInfo();
 		}
 	}
 	
 	
 	private void quitter() {
+		
 		FrmChoixGestion frm = new FrmChoixGestion();
 		frm.setVisible(true);
 		this.setVisible(false);
 	}
 	
 	private void printInfo() {
+		
 		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
 		String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
 		boolean estMembre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
@@ -307,5 +364,30 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		labPhotoArt.setIcon(icone);
 		
 	}
+	
+	private void remplacerPhoto() {
+		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
+		String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
+		String photo = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 3).toString();
+		
+		if (tableArtiste.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Choisissez l'artiste que vous voulez remplacer la photo.", "Erreur!", JOptionPane.OK_OPTION);
+			
+		}else {
+			
+			if (!photo.equalsIgnoreCase("default.png")) {
+				int choix = JOptionPane.showConfirmDialog(null, "Voulez-vous mettre l'image par défault à "+ nom +"?", "Attention!", JOptionPane.YES_NO_OPTION);
+				
+				if (choix == JOptionPane.YES_OPTION) {
+					sqliteConn.remplacerPhoto("default.png", id);
+					JOptionPane.showMessageDialog(null, "L'image par défaut a été appliqué à " + nom + "!");
+					updateTable();
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "L'artiste possède déjà l'image par défaut.", "Erreur!", JOptionPane.OK_OPTION);
+			}
+		}
+	}
+	
 
 }

@@ -80,5 +80,9 @@ public class ModeleArtiste extends AbstractTableModel {
 	       
 	 }
 	
+	public void ajouterArtiste(Artiste artiste) {
+		donnees.add(artiste);
+		fireTableRowsInserted(donnees.size() -1, donnees.size() -1);
+	}
 
 }

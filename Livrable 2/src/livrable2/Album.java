@@ -8,10 +8,10 @@ public class Album {
 	private String titre;
 	private String genre;
 	private int annee;
-	private ImageIcon image;
+	private String image;
 
 	// Constructeur
-	public Album(int idAlbum, int idArtiste, String titre, String genre, int annee, ImageIcon image) {
+	public Album(int idAlbum, int idArtiste, String titre, String genre, int annee, String image) {
 		this.idAlbum = idAlbum;
 		this.idArtiste = idArtiste;
 		this.titre = titre;
@@ -49,15 +49,15 @@ public class Album {
 		return this.annee;
 	}
 	
-	public ImageIcon getImage() {
+	public String getImage() {
 		return this.image;
 	}
 	
 	
 	@Override
 	public String toString() {
-		String album = getAnnee() + " - " + getTitre();
-		return album;
+		return getAnnee() + " - " + getTitre();
+		
 		
 	}
 	

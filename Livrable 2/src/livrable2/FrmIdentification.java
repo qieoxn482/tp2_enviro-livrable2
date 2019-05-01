@@ -5,16 +5,20 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.sqlite.SQLiteConnection;
 
 public class FrmIdentification extends JFrame implements ActionListener{
 	JTextField utilisateur, motPasse;
@@ -23,6 +27,7 @@ public class FrmIdentification extends JFrame implements ActionListener{
 	JLabel text, text2, text3;
 	JPanel pannel, pannel2, pannel3;
 	ImageIcon icone;
+	private Connection connection = null;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -97,24 +102,42 @@ public class FrmIdentification extends JFrame implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		String pass;
+		pass = new String(pw.getPassword());
+		
 		if (e.getSource() == quitter) {
 			System.exit(0);
+			
 		}else if (e.getSource() == valider) {
-			FrmChoixGestion frm = new FrmChoixGestion();
-			frm.setVisible(true);
-			this.setVisible(false);
+			
+			if (! (utilisateur.getText().equals("andrew2time") && 
+					pass.equals("password")) ) {
+				
+				JOptionPane.showMessageDialog(null, "Le nom d'utilisateur ou le mot "
+						+ "de passe est incorrect.", "Erreur", JOptionPane.OK_OPTION);
+				
+				utilisateur.setText("");
+				pw.setText("");
+				
+			}else {
+				
+				connection = SqliteConnection.dbConnector();
+				
+				if (!(connection == null)) {
+					FrmChoixGestion frm = new FrmChoixGestion();
+					frm.setVisible(true);
+					this.setVisible(false);
+				}
+			}
 		}
-		
 	}
 	
-	
 	private void changed() {
-		if (utilisateur.getText().equals("") || pw.getPassword().length == 0){
-		       valider.setEnabled(false);
-		     }
-		     else {
-		       valider.setEnabled(true);
-		    }
 		
+		if (utilisateur.getText().equals("") || pw.getPassword().length == 0) {
+			valider.setEnabled(false);
+		} else {
+			valider.setEnabled(true);
+		}
 	}
 }
