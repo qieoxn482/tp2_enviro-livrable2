@@ -97,7 +97,8 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		
 		tableArtiste.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
-				printInfo();
+				listAlbum.clearSelection();
+				printInfoArtiste();
 				printAlbum();
 			}
 		});
@@ -106,6 +107,17 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 
 		model = new DefaultListModel<Album>();
 		listAlbum = new JList<Album>(model);
+		listAlbum.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
+		listAlbum.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!listAlbum.isSelectionEmpty()) {
+					printImageAlbum();
+				}
+			}
+		});
 		
 		checkMembre = new JCheckBox();
 		checkMembre.setEnabled(false);
@@ -267,22 +279,33 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		}
 	}
 
-	public void deleteArtiste(int id) {
+	public void deleteArtiste() {
 		String sql = "DELETE FROM artistes WHERE id = ?";
 		// try (Connection conn = dbConnector();
-		try {
-			pstmt = connection.prepareStatement(sql);
-			pstmt.setInt(1, id);
-			pstmt.executeUpdate();
-			
-			JOptionPane.showMessageDialog(null, "L'artiste selectionné à été supprimé!");
-			
-			pstmt.close();
-			//conn.close();
+		if (tableArtiste.getSelectionModel().isSelectionEmpty() == true) {
+			JOptionPane.showMessageDialog(null, "Selectionné l'artiste que vous voulez supprimé!");
+		}else {
+			int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
+			int choix = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimé cette artiste?",
+					"Attention!", JOptionPane.YES_NO_CANCEL_OPTION);
+			if (choix == JOptionPane.YES_OPTION) {
+				try {
+					pstmt = connection.prepareStatement(sql);
+					pstmt.setInt(1, id);
+					pstmt.executeUpdate();
+					
+					JOptionPane.showMessageDialog(null, "L'artiste selectionné à été supprimé!");
+					
+					pstmt.close();
+					updateTable();
+					//conn.close();
 
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+				}
+			}
 		}
+		
 	}
 	
 	public void remplacerPhoto(String photo, int id, String nom) {
@@ -293,7 +316,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			pstmt.setInt(2, id);
 			
 			pstmt.executeUpdate();
-			
 			pstmt.close();
 			//conn.close();
 			JOptionPane.showMessageDialog(null, "L'image par défaut a été appliqué à " + nom + "!");
@@ -324,6 +346,13 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		}
 		return donnees;
 
+	}
+	
+	private void printImageAlbum() {
+		String image = listAlbum.getSelectedValue().getImage();
+		icone = new ImageIcon(App.class.getResource(image));
+		labImageAlbum.setIcon(icone);
+		
 	}
 	
 	
@@ -384,7 +413,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			
 			
 		} else if (e.getSource() == btnSup) {
-			//supprimerArtiste();
+			deleteArtiste();
 			
 		}  else if (e.getSource() == btnRemp) {
 			remplacerPhoto();
@@ -415,7 +444,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			String nom = tableArtiste.getModel().getValueAt( tableArtiste.getSelectedRow(), 1).toString();
 			boolean membre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
 			updateArtiste(id, nom, membre, "default.png", fonction);
-			printInfo();
+			printInfoArtiste();
 		}
 	}
 	
@@ -432,7 +461,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		this.setVisible(false);
 	}
 	
-	private void printInfo() {
+	private void printInfoArtiste() {
 		
 		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
 		String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
