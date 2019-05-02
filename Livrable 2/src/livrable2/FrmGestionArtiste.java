@@ -29,15 +29,16 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	private Font f1, f2;
 	private ImageIcon icone;
 	private JTable tableArtiste;
-	private JScrollPane ascensseur, scrollAlbum;
+	private JScrollPane ascensseur;
 	private ModeleArtiste modeleArtiste;
+	private PreparedStatement pstmt = null;
+	private ResultSet rs = null;
 	private Connection connection = null;
-	private SqliteConnection sqliteConn;
 
 	public FrmGestionArtiste() {
 		super("Gestion d'artistes");
 		connection = SqliteConnection.dbConnector();
-		sqliteConn = new SqliteConnection();
+		
 		setSize(1024, 768);
 		pane = new Container();
 		pane.setLayout(new BorderLayout());
@@ -226,18 +227,98 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			}
 		});
 	}
+	
+	public void insertNouveau() {
+        String sql = "INSERT INTO artistes(nom, photo) VALUES(?, ?)";
+        //try (Connection conn = dbConnector();
+        try  {
+        	pstmt = connection.prepareStatement(sql);
+            pstmt.setString(1, "");
+            pstmt.setString(2, "default.png");
+            pstmt.executeUpdate();
+            
+            JOptionPane.showMessageDialog(null, "Un nouvelle artiste à été crée!");
+            
+            pstmt.close();
+           // conn.close();
+            
+        } catch (SQLException e) {
+        	JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+        }
+    }
+ 
+	public void updateArtiste(int id, String nom, boolean membre, String imageIcon, String fonction) {
+		String sql = "UPDATE artistes SET nom = ?, membre = ?, photo = ? WHERE id = ?";
+
+		// try (Connection conn = this.dbConnector();
+		try {
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, nom);
+			pstmt.setBoolean(2, membre);
+			pstmt.setString(3, imageIcon);
+			pstmt.setInt(4, id);
+			pstmt.executeUpdate();
+			
+			JOptionPane.showMessageDialog(null, "L'artiste selectionné à été "+fonction +"!");
+			
+			pstmt.close();
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+		}
+	}
+
+	public void deleteArtiste(int id) {
+		String sql = "DELETE FROM artistes WHERE id = ?";
+		// try (Connection conn = dbConnector();
+		try {
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setInt(1, id);
+			pstmt.executeUpdate();
+			
+			JOptionPane.showMessageDialog(null, "L'artiste selectionné à été supprimé!");
+			
+			pstmt.close();
+			//conn.close();
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+		}
+	}
+	
+	public void remplacerPhoto(String photo, int id, String nom) {
+		String sql = "UPDATE artistes SET photo = ? WHERE id = ?";
+		try {
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setString(1, photo);
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();
+			
+			pstmt.close();
+			//conn.close();
+			JOptionPane.showMessageDialog(null, "L'image par défaut a été appliqué à " + nom + "!");
+
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+		}
+		
+	}
+	
+	
 
 	private ArrayList<Artiste> donneesArtiste() {
 		ArrayList<Artiste> donnees = new ArrayList<Artiste>();
 		try {
 			String query = "select * from artistes";
-			PreparedStatement pst = connection.prepareStatement(query);
-			ResultSet rs = pst.executeQuery();
+			pstmt = connection.prepareStatement(query);
+			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				donnees.add(new Artiste(rs.getInt("id"), rs.getString("nom"), 
 						rs.getBoolean("membre"), rs.getString("photo")));
 			}
-
+			
+			pstmt.close();
+			rs.close();
 		} catch (SQLException se) {
 			System.out.println("ERREUR SQL :" + se);
 		}
@@ -248,16 +329,14 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	
 	private void printAlbum() {
 		model.clear();
-		PreparedStatement pst = null;
-		ResultSet rs = null;
 		
 		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
 		
 		try {
 			String query = "select * from albums WHERE  id_artiste = ? ORDER BY annee ASC";
-			pst = connection.prepareStatement(query);
-			pst.setInt(1, id);
-			rs = pst.executeQuery();
+			pstmt = connection.prepareStatement(query);
+			pstmt.setInt(1, id);
+			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				model.addElement(new Album(rs.getInt("id_album"), rs.getInt("id_artiste"),
@@ -265,6 +344,9 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 						rs.getString("image")));
 				
 			}
+			
+			pstmt.close();
+			rs.close();
 			//connection.close();
 			
 		} catch (SQLException e1) {
@@ -293,7 +375,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			modifierArtiste(fonction);
 
 		} else if (e.getSource() == btnNouv) {
-			sqliteConn.insertNouveau();
+			insertNouveau();
 			updateTable();
 			
 		} else if (e.getSource() == btnModif) {
@@ -313,7 +395,11 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	}
 
 	private void updateTable() {
-		
+		try {
+			connection.close();
+		} catch (Exception e) {
+			
+		}
 		FrmGestionArtiste frm = new FrmGestionArtiste();
 		this.setVisible(false);
 		frm.setVisible(true);
@@ -328,7 +414,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
 			String nom = tableArtiste.getModel().getValueAt( tableArtiste.getSelectedRow(), 1).toString();
 			boolean membre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
-			sqliteConn.updateArtiste(id, nom, membre, "default.png", fonction);
+			updateArtiste(id, nom, membre, "default.png", fonction);
 			printInfo();
 		}
 	}
@@ -381,7 +467,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 				int choix = JOptionPane.showConfirmDialog(null, "Voulez-vous mettre l'image par défault à "+ nom +"?", "Attention!", JOptionPane.YES_NO_OPTION);
 				
 				if (choix == JOptionPane.YES_OPTION) {
-					sqliteConn.remplacerPhoto("default.png", id, nom);
+					remplacerPhoto("default.png", id, nom);
 					updateTable();
 				}
 			} else {

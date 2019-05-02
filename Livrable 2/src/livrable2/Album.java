@@ -1,6 +1,5 @@
 package livrable2;
 
-import javax.swing.ImageIcon;
 
 public class Album {
 	private int idAlbum;

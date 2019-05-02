@@ -99,6 +99,7 @@ public class FrmChoixGestion extends JFrame implements ActionListener{
 			FrmGestionArtiste frm = new FrmGestionArtiste();
 			frm.setVisible(true);
 			this.setVisible(false);
+			
 			 
 		}else if (e.getSource() == albums) {
 			JOptionPane.showMessageDialog(null, "Après la réalisation que cette partie du TP est un bonus, \n" +

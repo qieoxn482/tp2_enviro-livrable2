@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -27,7 +26,6 @@ public class FrmIdentification extends JFrame implements ActionListener{
 	JLabel text, text2, text3;
 	JPanel pannel, pannel2, pannel3;
 	ImageIcon icone;
-	private Connection connection = null;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -131,13 +129,13 @@ public class FrmIdentification extends JFrame implements ActionListener{
 				
 			}else {
 				
-				connection = SqliteConnection.dbConnector();
+				//connection = SqliteConnection.dbConnector();
 				
-				if (!(connection == null)) {
+				//if (!(connection == null)) {
 					FrmChoixGestion frm = new FrmChoixGestion();
 					frm.setVisible(true);
 					this.setVisible(false);
-				}
+				//}
 			}
 		}
 	}
