@@ -15,13 +15,13 @@ public class Artiste {
 		this.photo = photo;
 	}
 
-	// Constructeur pour la recherche et la suppression par numéro d'employé
-	/*public Employe(String numero ){
-			this.code= numero;
-			this.nom= "";
+	/*// Constructeur pour la recherche et la suppression par numéro d'employé
+	public Artiste(String nom ){
+			this.id= 0;
+			this.nom= "nom";
 			this.salaire= 0.0;
 			this.profession= "";
-		}*/
+	}*/
 
 	// Accesseurs
 	public int getId() {

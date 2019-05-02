@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 
 import javax.swing.ImageIcon;
@@ -17,8 +19,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import org.sqlite.SQLiteConnection;
 
 public class FrmIdentification extends JFrame implements ActionListener{
 	JTextField utilisateur, motPasse;
@@ -98,6 +98,16 @@ public class FrmIdentification extends JFrame implements ActionListener{
         add(pannel2);
         add(pannel3);
         
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        
+		addWindowListener(new WindowAdapter() {
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				quitter();
+			}
+		});
+        
 	}
 
 	@Override
@@ -106,7 +116,7 @@ public class FrmIdentification extends JFrame implements ActionListener{
 		pass = new String(pw.getPassword());
 		
 		if (e.getSource() == quitter) {
-			System.exit(0);
+			quitter();
 			
 		}else if (e.getSource() == valider) {
 			
@@ -138,6 +148,15 @@ public class FrmIdentification extends JFrame implements ActionListener{
 			valider.setEnabled(false);
 		} else {
 			valider.setEnabled(true);
+		}
+	}
+	
+	private void quitter() {
+		int confirmed = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment "
+				+ "quitter l'application?","Quitter", JOptionPane.YES_NO_OPTION);
+
+		if (confirmed == JOptionPane.YES_OPTION) {
+			System.exit(0);
 		}
 	}
 }

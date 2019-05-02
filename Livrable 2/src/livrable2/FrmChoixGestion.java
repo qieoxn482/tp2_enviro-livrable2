@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import javax.swing.ImageIcon;
@@ -78,12 +80,20 @@ public class FrmChoixGestion extends JFrame implements ActionListener{
         add(pannel4);
         
         setResizable(false);
+        
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        
+        addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				quitter();
+			}
+		});
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == quitter) {
-			System.exit(0);
+			quitter();
 			
 		}else if (e.getSource() == artistes) {
 			FrmGestionArtiste frm = new FrmGestionArtiste();
@@ -106,6 +116,16 @@ public class FrmChoixGestion extends JFrame implements ActionListener{
 			
 		}
 		
+	}
+	
+	public void quitter() {
+		int confirmed = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment "
+				+ "quitter l'application?",
+				"Quitter", JOptionPane.YES_NO_OPTION);
+
+		if (confirmed == JOptionPane.YES_OPTION) {
+			dispose();
+		}
 	}
 
 }
