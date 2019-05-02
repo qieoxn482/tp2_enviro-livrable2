@@ -7,7 +7,6 @@ public class Artiste {
 	private boolean membre;
 	private String photo;
 
-	// Constructeur
 	public Artiste(int id, String nom, boolean membre, String photo) {
 		this.id = id;
 		this.nom = nom;
@@ -15,15 +14,6 @@ public class Artiste {
 		this.photo = photo;
 	}
 
-	/*// Constructeur pour la recherche et la suppression par numéro d'employé
-	public Artiste(String nom ){
-			this.id= 0;
-			this.nom= "nom";
-			this.salaire= 0.0;
-			this.profession= "";
-	}*/
-
-	// Accesseurs
 	public int getId() {
 		return this.id;
 	}

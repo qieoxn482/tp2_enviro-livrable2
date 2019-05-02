@@ -9,7 +9,7 @@ public class Album {
 	private int annee;
 	private String image;
 
-	// Constructeur
+	
 	public Album(int idAlbum, int idArtiste, String titre, String genre, int annee, String image) {
 		this.idAlbum = idAlbum;
 		this.idArtiste = idArtiste;
@@ -19,15 +19,6 @@ public class Album {
 		this.image = image;
 	}
 
-	// Constructeur pour la recherche et la suppression par numéro d'employé
-	/*public Employe(String numero ){
-			this.code= numero;
-			this.nom= "";
-			this.salaire= 0.0;
-			this.profession= "";
-		}*/
-
-	// Accesseurs
 	public int getIdAlbum() {
 		return this.idAlbum;
 	}

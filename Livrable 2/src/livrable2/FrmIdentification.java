@@ -129,13 +129,10 @@ public class FrmIdentification extends JFrame implements ActionListener{
 				
 			}else {
 				
-				//connection = SqliteConnection.dbConnector();
+				FrmChoixGestion frm = new FrmChoixGestion();
+				frm.setVisible(true);
+				this.setVisible(false);
 				
-				//if (!(connection == null)) {
-					FrmChoixGestion frm = new FrmChoixGestion();
-					frm.setVisible(true);
-					this.setVisible(false);
-				//}
 			}
 		}
 	}

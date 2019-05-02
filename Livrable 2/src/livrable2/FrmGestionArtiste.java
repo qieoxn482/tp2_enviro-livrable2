@@ -242,7 +242,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	
 	public void insertNouveau() {
         String sql = "INSERT INTO artistes(nom, photo) VALUES(?, ?)";
-        //try (Connection conn = dbConnector();
+      
         try  {
         	pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, "");
@@ -252,7 +252,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(null, "Un nouvelle artiste à été crée!");
             
             pstmt.close();
-           // conn.close();
+           
             
         } catch (SQLException e) {
         	JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
@@ -262,7 +262,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	public void updateArtiste(int id, String nom, boolean membre, String imageIcon, String fonction) {
 		String sql = "UPDATE artistes SET nom = ?, membre = ?, photo = ? WHERE id = ?";
 
-		// try (Connection conn = this.dbConnector();
+		
 		try {
 			pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, nom);
@@ -281,7 +281,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 
 	public void deleteArtiste() {
 		String sql = "DELETE FROM artistes WHERE id = ?";
-		// try (Connection conn = dbConnector();
 		if (tableArtiste.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Selectionné l'artiste que vous voulez supprimé!");
 		}else {
@@ -298,7 +297,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 					
 					pstmt.close();
 					updateTable();
-					//conn.close();
 
 				} catch (SQLException e) {
 					JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
@@ -317,7 +315,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			
 			pstmt.executeUpdate();
 			pstmt.close();
-			//conn.close();
 			JOptionPane.showMessageDialog(null, "L'image par défaut a été appliqué à " + nom + "!");
 
 		} catch (SQLException e) {
@@ -376,7 +373,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			
 			pstmt.close();
 			rs.close();
-			//connection.close();
 			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
