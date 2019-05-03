@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class FrmGestionArtiste extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -34,7 +36,8 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	private PreparedStatement pstmt = null;
 	private ResultSet rs = null;
 	private Connection connection = null;
-
+	private TableRowSorter<TableModel> sorter;
+  
 	public FrmGestionArtiste() {
 		super("Gestion d'artistes");
 		connection = SqliteConnection.dbConnector();
@@ -92,6 +95,8 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 
 		modeleArtiste = new ModeleArtiste(donneesArtiste());
 		tableArtiste = new JTable(modeleArtiste);
+		sorter = new TableRowSorter<TableModel>(modeleArtiste);
+	    tableArtiste.setRowSorter(sorter);
 		tableArtiste.setPreferredScrollableViewportSize(new Dimension(270, 80));
 		tableArtiste.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
@@ -280,30 +285,38 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	}
 
 	public void deleteArtiste() {
-		String sql = "DELETE FROM artistes WHERE id = ?";
-		if (tableArtiste.getSelectionModel().isSelectionEmpty() == true) {
-			JOptionPane.showMessageDialog(null, "Selectionné l'artiste que vous voulez supprimé!");
-		}else {
-			int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
-			int choix = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimé cette artiste?",
-					"Attention!", JOptionPane.YES_NO_CANCEL_OPTION);
-			if (choix == JOptionPane.YES_OPTION) {
-				try {
-					pstmt = connection.prepareStatement(sql);
-					pstmt.setInt(1, id);
-					pstmt.executeUpdate();
-					
-					JOptionPane.showMessageDialog(null, "L'artiste selectionné à été supprimé!");
-					
-					pstmt.close();
-					updateTable();
+		if (!(listAlbum.getModel().getSize() == 0)) {
+			JOptionPane.showMessageDialog(null, "La suppression d'un artiste qui possède des albums est impossible.", "Erreur", JOptionPane.OK_OPTION);
+		} else {
+			
+			String sql = "DELETE FROM artistes WHERE id = ?";
+			
+			if (tableArtiste.getSelectionModel().isSelectionEmpty() == true) {
+				JOptionPane.showMessageDialog(null, "Selectionné l'artiste que vous voulez supprimé!");
+		
+			} else {
+				
+				int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
+				int choix = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment supprimé cette artiste?",
+						"Attention!", JOptionPane.YES_NO_CANCEL_OPTION);
+				
+				if (choix == JOptionPane.YES_OPTION) {
+					try {
+						pstmt = connection.prepareStatement(sql);
+						pstmt.setInt(1, id);
+						pstmt.executeUpdate();
 
-				} catch (SQLException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+						JOptionPane.showMessageDialog(null, "L'artiste selectionné à été supprimé!");
+
+						pstmt.close();
+						updateTable();
+
+					} catch (SQLException e) {
+						JOptionPane.showMessageDialog(null, e.getMessage(), "Erreur", JOptionPane.CANCEL_OPTION);
+					}
 				}
 			}
 		}
-		
 	}
 	
 	public void remplacerPhoto(String photo, int id, String nom) {
@@ -323,8 +336,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		
 	}
 	
-	
-
 	private ArrayList<Artiste> donneesArtiste() {
 		ArrayList<Artiste> donnees = new ArrayList<Artiste>();
 		try {
@@ -349,48 +360,46 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		String image = listAlbum.getSelectedValue().getImage();
 		icone = new ImageIcon(App.class.getResource(image));
 		labImageAlbum.setIcon(icone);
-		
 	}
 	
 	
 	private void printAlbum() {
-		model.clear();
 		
-		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
-		
-		try {
-			String query = "select * from albums WHERE  id_artiste = ? ORDER BY annee ASC";
-			pstmt = connection.prepareStatement(query);
-			pstmt.setInt(1, id);
-			rs = pstmt.executeQuery();
+		if (tableArtiste.getSelectionModel().isSelectionEmpty() == false) {
+			model.clear();
 			
-			while(rs.next()) {
-				model.addElement(new Album(rs.getInt("id_album"), rs.getInt("id_artiste"),
-						rs.getString("titre"),rs.getString("genre"), rs.getInt("annee"), 
-						rs.getString("image")));
+			int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
+			
+			try {
+				String query = "select * from albums WHERE  id_artiste = ? ORDER BY annee ASC";
+				pstmt = connection.prepareStatement(query);
+				pstmt.setInt(1, id);
+				rs = pstmt.executeQuery();
+				
+				while(rs.next()) {
+					model.addElement(new Album(rs.getInt("id_album"), rs.getInt("id_artiste"),
+							rs.getString("titre"),rs.getString("genre"), rs.getInt("annee"), 
+							rs.getString("image")));
+				}
+				
+				pstmt.close();
+				rs.close();
+				
+			} catch (SQLException e1) {
+				e1.printStackTrace();
 				
 			}
-			
-			pstmt.close();
-			rs.close();
-			
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-			
 		}
-		
 		
 	}
 	
-	
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String fonction;
 		
 		if (e.getSource() == btnRecherche) {
-			JOptionPane.showMessageDialog(null, "Cette fonctionnalité sera disponible lors du livrable 2!");
-
+			rechercherArtiste();
+			
 		} else if (e.getSource() == btnQuitter) {
 			quitter();
 			
@@ -413,10 +422,7 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 			
 		}  else if (e.getSource() == btnRemp) {
 			remplacerPhoto();
-			
 		} 
-		
-		
 	}
 
 	private void updateTable() {
@@ -428,7 +434,6 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		FrmGestionArtiste frm = new FrmGestionArtiste();
 		this.setVisible(false);
 		frm.setVisible(true);
-		
 	}
 	
 	private void modifierArtiste(String fonction) {
@@ -458,23 +463,25 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	}
 	
 	private void printInfoArtiste() {
+		if (tableArtiste.getSelectionModel().isSelectionEmpty() == false) {
+			int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
+			String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
+			boolean estMembre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
+			String photo = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 3).toString();
+			
+			textNom.setText(nom);
+			textNumero.setText(Integer.toString(id));
+			
+			if (estMembre) {
+				checkMembre.setSelected(true);;
+			}else {
+				checkMembre.setSelected(false);
+			}
+			
+			icone = new ImageIcon(App.class.getResource(photo));
+			labPhotoArt.setIcon(icone);
+		} 
 		
-		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
-		String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
-		boolean estMembre = (Boolean) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 2);
-		String photo = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 3).toString();
-		
-		textNom.setText(nom);
-		textNumero.setText(Integer.toString(id));
-		
-		if (estMembre) {
-			checkMembre.setSelected(true);;
-		}else {
-			checkMembre.setSelected(false);
-		}
-		
-		icone = new ImageIcon(App.class.getResource(photo));
-		labPhotoArt.setIcon(icone);
 		
 	}
 	
@@ -502,5 +509,25 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 		}
 	}
 	
-
+	private void rechercherArtiste() {
+		if (!tableArtiste.getSelectionModel().isSelectionEmpty()) {
+			tableArtiste.getSelectionModel().clearSelection();
+		}
+		
+		String text = textRecherche.getText();
+		
+		if (text.length() == 0) {
+			sorter.setRowFilter(null);
+			
+		} else {
+			sorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+			
+			if (tableArtiste.getRowSorter().getViewRowCount() == 0) {
+				JOptionPane.showMessageDialog(null, "Il n'y a aucun artiste de ce nom!", "Erreur",
+						JOptionPane.OK_OPTION);
+			}
+		}
+	}
 }
+
+

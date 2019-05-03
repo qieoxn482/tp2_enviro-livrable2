@@ -32,6 +32,7 @@
 		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_CREATE_CONTAINER_STRUCTURE_ID"/>
 		<item value="false" key="WizardFileSystemResourceImportPage1.STORE_OVERWRITE_EXISTING_RESOURCES_ID"/>
 		<list key="WizardFileSystemResourceImportPage1.STORE_SOURCE_NAMES_ID">
+			<item value="C:\Users\allow\Desktop\VAg\casou"/>
 			<item value="C:\Users\allow\Desktop"/>
 			<item value="C:\Users\allow\Documents\Cégep\4th Semester\Environnement Graphique\Enonce TP2\Aide en ligne test"/>
 			<item value="C:\Users\allow\Documents\Cégep\4th Semester\Environnement Graphique"/>
