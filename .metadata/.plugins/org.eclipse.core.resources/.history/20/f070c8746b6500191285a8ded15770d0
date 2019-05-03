@@ -1,9 +1,0 @@
-package vue;
-
-import javax.swing.JFrame;
-
-public class FrmAjoutArtiste extends JFrame {
-
-	private static final long serialVersionUID = 1L;
-
-}

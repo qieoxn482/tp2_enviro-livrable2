@@ -479,14 +479,15 @@ public class FrmGestionArtiste extends JFrame implements ActionListener {
 	}
 	
 	private void remplacerPhoto() {
-		int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
-		String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
-		String photo = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 3).toString();
+		
 		
 		if (tableArtiste.getSelectionModel().isSelectionEmpty() == true) {
 			JOptionPane.showMessageDialog(null, "Choisissez l'artiste que vous voulez remplacer la photo.", "Erreur!", JOptionPane.OK_OPTION);
 			
 		}else {
+			int id = (Integer) tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 0);
+			String nom = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 1).toString();
+			String photo = tableArtiste.getModel().getValueAt(tableArtiste.getSelectedRow(), 3).toString();
 			
 			if (!photo.equalsIgnoreCase("default.png")) {
 				int choix = JOptionPane.showConfirmDialog(null, "Voulez-vous mettre l'image par défault à "+ nom +"?", "Attention!", JOptionPane.YES_NO_OPTION);

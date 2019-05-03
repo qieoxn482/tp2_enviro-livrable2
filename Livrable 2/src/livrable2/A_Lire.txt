@@ -1,11 +1,20 @@
 A LIRE!
 ===================================================================
-Identification
+IDENTIFICATION
 -------------------------------------------------------------------
 User: andrew2time
 Password: password
 
 -------------------------------------------------------------------
-Projet GitHub
+PROJET GITHUB
 -------------------------------------------------------------------
 https://github.com/qieoxn482/tp2_enviro-livrable2.git
+
+-------------------------------------------------------------------
+INSTRUCTION
+-------------------------------------------------------------------
+Si ce n'est pas déja fait, pour utiliser l'application, il faut
+ajouter en tant qu'"External Jar" le fichier "sqlite-jdbc 3.8.11.2.jar"
+pour permettre la connection à la base de données.
+
+Merci!
